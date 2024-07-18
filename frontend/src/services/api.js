@@ -1,7 +1,8 @@
 import axios from "axios"; // Importa il modulo axios per effettuare le richieste HTTP
 
 // NEW! Definiamo l'url di base per tutte le richieste API
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+// const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+const API_URL = "https://mern-blog-ctt3.onrender.com"
 
 // Configura un'istanza di axios con l'URL di base
 const api = axios.create({
@@ -79,7 +80,7 @@ export const deleteComment = (postId, commentId) =>
 // NEW! ROTTE NUOVE PER AUTENTICAZIONE
 
 // NEW! Funzione per registrare un nuovo utente
-export const registerUser = (userData) => api.post("/api/authors", userData);
+export const registerUser = (userData) => api.post("/authors", userData);
 
 // NEW: Funzione per effettuare il login di un utente
 export const loginUser = async (credentials) => {
