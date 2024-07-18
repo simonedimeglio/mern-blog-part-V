@@ -19,6 +19,34 @@ Nel file `.env` del backend aggiungiamo:
 ```env
 NODE_ENV = development
 FRONTEND_URL = lo aggiungiamo dopo il deploy su vercel
+BACKEND_URL = lo aggiungiamo dopo il deploy su render
+```
+
+Nel file `passportConfig.js` modifichiamo le strategie: 
+
+```javascript
+passport.use(
+  new GoogleStrategy(
+    {
+      // Usiamo le variabili d'ambiente per le credenziali OAuth
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      // L'URL a cui Google reindizzerà dopo l'autenticazione
+      callbackURL: `${process.env.BACKEND_URL}/api/auth/google/callback`
+    },
+
+
+    [...altro codice...]
+    [se hai implementato l'auth con github modifica pure quella!]
+
+passport.use(new GitHubStrategy({
+  // Usiamo le variabili d'ambiente per le credenziali OAuth di GitHub
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  // URL a cui GitHub reindirizzerà dopo l'autenticazione
+  callbackURL: `${process.env.BACKEND_URL}/api/auth/github/callback`
+
+},
 ```
 
 Nel file `authRoutes.js` dobbiamo fare qualche modifica: 
@@ -55,7 +83,7 @@ async function handleAuthCallback(req, res) {
 ```
 
 
-Nel file `server.js` aggiungiamo:
+Nel file `server.js` aggiungiamo, subito dopo la riga `const app = express()`:
 
 ```javascript
 // NEW! Configurazione CORS
@@ -83,6 +111,7 @@ const corsOptions = {
   // basata su sessioni.
 };
 
+// NEW! passiamo `corsOptions` a cors()
 app.use(cors(corsOptions));
 ```
 
@@ -141,7 +170,7 @@ Prima dobbiamo preparare il frontend per Vercel
 ### Settiamo le variabili d'ambiente del frontend in `.env`
 
 ```env
-VITE_API_URL = https://tua-app.onrender.com
+VITE_API_URL = https://nome_della_tua_app.onrender.com
 CI = false
 ```
 
@@ -152,7 +181,7 @@ Dobbiamo aggiornare tutti i riferimenti a localhost nel frontend per utilizzare 
 - Aggiorniamo il file `api.js`
 
 ```javascript
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+const API_URL = "https://nome_della_tua_app.onrender.com/api"
 ```
 - Aggiorniamo il file `Login.jsx`
 
@@ -165,17 +194,58 @@ export default function Login() {
 
   // Funzione aggiornata per gestire il login con Google
   const handleGoogleLogin = () => {
-    window.location.href = `${API_URL}/auth/google`;
+    window.location.href = `${API_URL}/api/auth/google`;
   };
 
   // Funzione aggiornata per gestire il login con GitHub
   const handleGitHubLogin = () => {
-    window.location.href = `${API_URL}/auth/github`;
+    window.location.href = `${API_URL}/api/auth/github`;
   };
+
 ```
 
+Modifico anche l'useEffect della navbar, per gestire meglio i token: 
 
-### Deploy
+```jsx
+import { getUserData } from "../services/api";
+
+  useEffect(() => {
+    // NEW! Approccio migliore - Controlla se esiste un token nel localStorage
+    const checkLoginStatus = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          await getUserData();
+          setIsLoggedIn(true);
+        } catch (error) {
+          console.error("Token non valido:", error);
+          localStorage.removeItem("token");
+          setIsLoggedIn(false);
+        }
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+
+    // Controlla lo stato di login all'avvio
+    checkLoginStatus();
+
+    // Aggiungi un event listener per controllare lo stato di login
+    window.addEventListener("storage", checkLoginStatus);
+    // NEW! Evento per il cambio di stato
+    window.addEventListener("loginStateChange", checkLoginStatus);
+
+    // NEW! Rimuovi l'event listener quando il componente viene smontato e quando cambia
+    return () => {
+      window.removeEventListener("storage", checkLoginStatus);
+      window.removeEventListener("loginStateChange", checkLoginStatus);
+    };
+  }, []);
+
+
+```
+
+### Deploy su Vercel
 
 - Project Name: nome del progetto, a piacere tuo. 
 - Framework Preset: lascia come lo trovi 
