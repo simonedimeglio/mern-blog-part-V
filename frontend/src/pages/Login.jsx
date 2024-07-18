@@ -69,7 +69,7 @@ export default function Login() {
 
   return (
     <div className="container">
-      <h2>Login</h2>
+      <h2>Login per il blog</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
