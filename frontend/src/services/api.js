@@ -79,7 +79,7 @@ export const deleteComment = (postId, commentId) =>
 // NEW! ROTTE NUOVE PER AUTENTICAZIONE
 
 // NEW! Funzione per registrare un nuovo utente
-export const registerUser = (userData) => api.post("/authors", userData);
+export const registerUser = (userData) => api.post("/api/authors", userData);
 
 // NEW: Funzione per effettuare il login di un utente
 export const loginUser = async (credentials) => {
