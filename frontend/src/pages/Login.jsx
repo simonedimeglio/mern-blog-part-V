@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react"; 
-import { useNavigate, useLocation } from "react-router-dom"; 
-import { loginUser} from "../services/api"; //
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { loginUser } from "../services/api";
+
+// Importa l'URL dell'API dalla variabile d'ambiente
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -51,15 +54,14 @@ export default function Login() {
     }
   };
 
-  // NEW! Funzione per gestire il login con Google
+  // Funzione aggiornata per gestire il login con Google
   const handleGoogleLogin = () => {
-    // Reindirizziamo l'utente all'endpoint del backend che inizia il processo di autenticazione Google
-    window.location.href = "http://localhost:5001/api/auth/google";
+    window.location.href = `${API_URL}/auth/google`;
   };
 
-  // NEW! Funzione per gestire il login con GitHub
+  // Funzione aggiornata per gestire il login con GitHub
   const handleGitHubLogin = () => {
-    window.location.href = "http://localhost:5001/api/auth/github";
+    window.location.href = `${API_URL}/auth/github`;
   };
 
   return (

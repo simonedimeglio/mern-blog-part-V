@@ -18,7 +18,42 @@ Nel file `.env` del backend aggiungiamo:
 
 ```env
 NODE_ENV = development
+FRONTEND_URL = lo aggiungiamo dopo il deploy su vercel
 ```
+
+Nel file `authRoutes.js` dobbiamo fare qualche modifica: 
+
+```javascript
+// Definisci l'URL del frontend usando una variabile d'ambiente
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+// ... altre rotte esistenti ...
+
+// Rotta di callback per l'autenticazione Google
+router.get('/google/callback', 
+  passport.authenticate('google', { failureRedirect: `${FRONTEND_URL}/login` }),
+  handleAuthCallback
+);
+
+// Rotta di callback per l'autenticazione GitHub
+router.get('/github/callback',
+  passport.authenticate('github', { failureRedirect: `${FRONTEND_URL}/login` }),
+  handleAuthCallback
+);
+
+// Funzione helper per gestire il callback di autenticazione
+async function handleAuthCallback(req, res) {
+  try {
+    const token = await generateJWT({ id: req.user._id });
+    // Usa FRONTEND_URL per il reindirizzamento
+    res.redirect(`${FRONTEND_URL}/login?token=${token}`);
+  } catch (error) {
+    console.error('Errore nella generazione del token:', error);
+    res.redirect(`${FRONTEND_URL}/login?error=auth_failed`);
+  }
+}
+```
+
 
 Nel file `server.js` aggiungiamo:
 
@@ -48,9 +83,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 ```
 
-4. Prepariamo il frontend per Vercel: in realtà per questo passaggio non ci sono grosse operazioni da fare, se non assicurarsi che nel `package.json` abbiamo effettivamente uno script di build.
-
-5. Configurazione di Cloudinary: assicurati di avere le credenziali Cloudinary nel file `.env` del backend:
+4. Configurazione di Cloudinary: assicurati di avere le credenziali Cloudinary nel file `.env` del backend:
 
 ```env
 CLOUDINARY_CLOUD_NAME = **********
@@ -78,8 +111,8 @@ Vai su https://render.com/ e crea un account gratuito.
 - Branch: main
 - Region: Frankfurt (EU Central)
 - Root Directory: non inserire niente
-- Build Command: npm install
-- Start Command: node server.js
+- Build Command: cd backend && npm install
+- Start Command: cd backend && node server.js
 - **Piano: IMPORTANTE! Seleziona il piano gratuito!**
 - Nella sezione "Environment", aggiungi tutte le variabili d'ambiente necessarie.
 > Assicurati di includere NODE_ENV=production.
@@ -96,3 +129,59 @@ Clicca su "Deploy Web Service" per iniziare il deploy.
 - Il piano gratuito di Render spegne il tuo servizio dopo un periodo di inattività. Si riavvierà automaticamente quando riceve una nuova richiesta, ma potrebbe esserci un leggero ritardo nella prima risposta.
 
 - Render supporta l'integrazione continua: ogni push al branch principale del tuo repository triggererà un nuovo deploy.
+
+## Deploy del frontend su Vercel 
+
+Prima dobbiamo preparare il frontend per Vercel
+
+### Settiamo le variabili d'ambiente del frontend in `.env`
+
+```env
+VITE_API_URL = https://tua-app.onrender.com
+CI = false
+```
+
+### Aggiornamento dei file che usavano `localhost`
+
+Dobbiamo aggiornare tutti i riferimenti a localhost nel frontend per utilizzare l'URL del backend deployato. 
+
+- Aggiorniamo il file `api.js`
+
+```javascript
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+```
+- Aggiorniamo il file `Login.jsx`
+
+```jsx
+// Importa l'URL dell'API dalla variabile d'ambiente
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+
+export default function Login() {
+  // ... altri stati e logica del componente
+
+  // Funzione aggiornata per gestire il login con Google
+  const handleGoogleLogin = () => {
+    window.location.href = `${API_URL}/auth/google`;
+  };
+
+  // Funzione aggiornata per gestire il login con GitHub
+  const handleGitHubLogin = () => {
+    window.location.href = `${API_URL}/auth/github`;
+  };
+```
+
+
+### Deploy
+
+- Project Name: nome del progetto, a piacere tuo. 
+- Framework Preset: lascia come lo trovi 
+- Root Directory: fai `edit` e metti `frontend`
+- Environment Variables: metti quelle del file `.env` del frontend
+
+Lancia la build et voilà!
+
+### Aggiorniamo il file `.env` del backend 
+
+```env
+FRONTEND_URL = https://mern-blog-part-v.vercel.app/
+```

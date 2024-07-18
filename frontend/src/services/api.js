@@ -1,7 +1,7 @@
 import axios from "axios"; // Importa il modulo axios per effettuare le richieste HTTP
 
-// Definiamo l'url di base per tutte le richieste API
-const API_URL = "http://localhost:5001/api";
+// NEW! Definiamo l'url di base per tutte le richieste API
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
 
 // Configura un'istanza di axios con l'URL di base
 const api = axios.create({

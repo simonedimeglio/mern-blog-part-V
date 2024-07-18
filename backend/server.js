@@ -31,8 +31,8 @@ const corsOptions = {
     // Queste sono gli URL da cui il nostro frontend farà richieste al backend.
     const whitelist = [
       'http://localhost:5173', // Frontend in sviluppo
-      'https://tuo-dominio-frontend.vercel.app', // Frontend in produzione
-      'https://mern-blog.onrender.com' // URL del backend
+      'https://mern-blog-part-v.vercel.app/', // Frontend in produzione (prendere da vercel!)
+      'https://mern-blog-ctt3.onrender.com' // URL del backend (prendere da render!)
     ];
     
     if (process.env.NODE_ENV === 'development') {
