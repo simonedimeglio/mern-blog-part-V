@@ -27,6 +27,18 @@ api.interceptors.request.use(
   }
 );
 
+// NEW! interceptor per gestire errori di autenticazione.
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      window.dispatchEvent(new Event("loginStateChange"));
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Funzione per ottenere tutti i post del blog
 export const getPosts = () => api.get("/blogPosts");
 

@@ -30,6 +30,7 @@ export default function Login() {
       console.log('Token saved, navigating to home');
       // Dispatchamo un evento 'storage' per aggiornare altri componenti che potrebbero dipendere dal token
       window.dispatchEvent(new Event("storage"));
+      window.dispatchEvent(new Event("loginStateChange"));
       // Navighiamo alla home page
       navigate("/");
     }
