@@ -82,4 +82,38 @@ router.get('/google/callback',
   }
 );
 
+// NEW! Nuove rotte GitHub
+// Rotta per iniziare il processo di autenticazione GitHub
+router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
+// Questo endpoint fa quanto segue:
+// 1. Quando l'utente visita questa rotta, viene reindirizzato alla pagina di login di GitHub
+// 2. 'github' specifica che stiamo usando la strategia GitHub configurata in Passport
+// 3. { scope: ['user:email'] } richiede l'accesso alle email dell'utente
+
+// Rotta di callback per l'autenticazione GitHub
+router.get('/github/callback',
+  // Passport tenta di autenticare l'utente con le credenziali GitHub
+  passport.authenticate('github', { failureRedirect: '/login' }),
+  // Se l'autenticazione fallisce, l'utente viene reindirizzato alla pagina di login
+  // Se l'autenticazione ha successo, passa al prossimo middleware (handleAuthCallback)
+  handleAuthCallback
+);
+
+// Funzione helper per gestire il callback di autenticazione
+async function handleAuthCallback(req, res) {
+  try {
+    // Genera un JWT (JSON Web Token) per l'utente autenticato
+    // req.user contiene i dati dell'utente forniti da Passport dopo l'autenticazione
+    const token = await generateJWT({ id: req.user._id });
+
+    // Reindirizza l'utente al frontend, passando il token come parametro URL
+    res.redirect(`http://localhost:5173/login?token=${token}`);
+  } catch (error) {
+    // Se c'è un errore nella generazione del token, lo logghiamo
+    console.error('Errore nella generazione del token:', error);
+    // E reindirizziamo l'utente alla pagina di login con un messaggio di errore
+    res.redirect('/login?error=auth_failed');
+  }
+}
+
 export default router;

@@ -7,8 +7,8 @@ import listEndpoints from "express-list-endpoints"; // Utility per elencare gli 
 import authorRoutes from "./routes/authorRoutes.js"; // Rotte per gli autori
 import blogPostRoutes from "./routes/blogPostRoutes.js"; // Rotte per i blog post
 import authRoutes from "./routes/authRoutes.js"; // Rotte per l'autenticazione
-import session from "express-session"; // NEW! Importiamo session
-import passport from "./config/passportConfig.js"; // NEW! importiamo passport
+import session from "express-session"; // Importiamo session
+import passport from "./config/passportConfig.js"; // importiamo passport
 
 // MIDDLEWARE Importazione dei middleware per la gestione degli errori
 import {
@@ -24,11 +24,36 @@ dotenv.config();
 // Creazione dell'istanza dell'applicazione Express
 const app = express();
 
+// NEW! Configurazione CORS
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Definiamo una whitelist di origini consentite. 
+    // Queste sono gli URL da cui il nostro frontend farà richieste al backend.
+    const whitelist = [
+      'http://localhost:5173', // Frontend in sviluppo
+      'https://tuo-dominio-frontend.vercel.app', // Frontend in produzione
+      'https://mern-blog.onrender.com' // URL del backend
+    ];
+    
+    if (process.env.NODE_ENV === 'development') {
+      // In sviluppo, permettiamo anche richieste senza origine (es. Postman)
+      callback(null, true);
+    } else if (whitelist.indexOf(origin) !== -1 || !origin) {
+      // In produzione, controlliamo se l'origine è nella whitelist
+      callback(null, true);
+    } else {
+      callback(new Error('PERMESSO NEGATO - CORS'));
+    }
+  },
+  credentials: true // Permette l'invio di credenziali, come nel caso di autenticazione
+  // basata su sessioni.
+};
+
 // Applicazione dei middleware globali
-app.use(cors()); // Abilita CORS per tutte le rotte
+app.use(cors(corsOptions)); // NEW! Abilita CORS per tutte le rotte
 app.use(express.json()); // Parsing del corpo delle richieste in formato JSON
 
-// NEW! Configurazione della sessione
+// Configurazione della sessione
 app.use(
   session({
     // Il 'secret' è usato per firmare il cookie di sessione
@@ -46,7 +71,7 @@ app.use(
   })
 );
 
-// NEW! Inizializzazione di Passport
+// Inizializzazione di Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -57,7 +82,7 @@ mongoose
   .catch((err) => console.error("Errore di connessione MongoDB:", err));
 
 // Definizione delle rotte principali
-app.use("/api/auth", authRoutes); // NEW! Rotte per l'autenticazione
+app.use("/api/auth", authRoutes); // Rotte per l'autenticazione
 app.use("/api/authors", authorRoutes); // Rotte per gli autori
 app.use("/api/blogPosts", blogPostRoutes); // Rotte per i blog post
 

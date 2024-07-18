@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react"; // NEW! Importa useState e useEffect
-import { useNavigate, useLocation } from "react-router-dom"; // NEW Importa useNavigate e useLocation da react-router-dom per navigare programmaticamente
-import { loginUser } from "../services/api"; // Importa la funzione API per effettuare il login
+import { useState, useEffect } from "react"; 
+import { useNavigate, useLocation } from "react-router-dom"; 
+import { loginUser} from "../services/api"; //
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -11,7 +11,6 @@ export default function Login() {
   const navigate = useNavigate(); // Inizializza il navigatore per cambiare pagina
   const location = useLocation(); // NEW! Per accedere ai parametri dell'URL corrente
 
-  // NEW!
   useEffect(() => {
     // Questo effect viene eseguito dopo il rendering del componente
     // e ogni volta che location o navigate cambiano
@@ -58,6 +57,11 @@ export default function Login() {
     window.location.href = "http://localhost:5001/api/auth/google";
   };
 
+  // NEW! Funzione per gestire il login con GitHub
+  const handleGitHubLogin = () => {
+    window.location.href = "http://localhost:5001/api/auth/github";
+  };
+
   return (
     <div className="container">
       <h2>Login</h2>
@@ -80,6 +84,7 @@ export default function Login() {
       </form>
       {/* NEW! */}
       <button onClick={handleGoogleLogin}>Accedi con Google</button>
+      <button onClick={handleGitHubLogin}>Accedi con GitHub</button>
     </div>
   );
 }
