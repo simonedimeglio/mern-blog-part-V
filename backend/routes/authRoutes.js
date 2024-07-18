@@ -53,14 +53,17 @@ router.get('/me', authMiddleware, (req, res) => {
   res.json(authorData);
 });
 
+
 // Rotta per iniziare il processo di autenticazione Google
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+
 // Questo endpoint inizia il flusso di autenticazione OAuth con Google
 // 'google' si riferisce alla strategia GoogleStrategy configurata in passportConfig.js
 // scope: specifica le informazioni richiediamo a Google (profilo e email)
 
 // Rotta di callback per l'autenticazione Google
-router.get('/api/auth/google/callback', 
+router.get('/google/callback', 
   // Passport tenta di autenticare l'utente con le credenziali Google
   passport.authenticate('google', { failureRedirect: `${FRONTEND_URL}/login` }),
   // Se l'autenticazione fallisce, l'utente viene reindirizzato alla pagina di login

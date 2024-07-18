@@ -4,7 +4,6 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as GitHubStrategy } from 'passport-github2'; // NEW! importo strategia GitHub
 import Author from "../models/Author.js";
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5001';
 
 // Configuriamo la strategia di autenticazione Google
 passport.use(
@@ -14,7 +13,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       // L'URL a cui Google reindizzerà dopo l'autenticazione
-      callbackURL: `${BACKEND_URL}/api/auth/google/callback`
+      callbackURL: "/api/auth/google/callback",
     },
     // Questa funzione viene chiamata quando l'autenticazione Google ha successo
     async (accessToken, refreshToken, profile, done) => {
@@ -56,7 +55,7 @@ passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
   // URL a cui GitHub reindirizzerà dopo l'autenticazione
-  callbackURL: `${BACKEND_URL}/api/auth/github/callback`
+  callbackURL: "/api/auth/github/callback",
 
 },
 // Funzione di verifica chiamata dopo che GitHub ha autenticato l'utente
