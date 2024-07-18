@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { loginUser } from "../services/api";
 
 // Importa l'URL dell'API dalla variabile d'ambiente
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -55,13 +55,13 @@ export default function Login() {
   };
 
   // Funzione aggiornata per gestire il login con Google
-  const handleGoogleLogin = () => {
-    window.location.href = `${API_URL}/auth/google`;
-  };
+ const handleGoogleLogin = () => {
+  window.location.href = `${API_URL}/api/auth/google`;
+};
 
   // Funzione aggiornata per gestire il login con GitHub
   const handleGitHubLogin = () => {
-    window.location.href = `${API_URL}/auth/github`;
+    window.location.href = `${API_URL}/api/auth/github`;
   };
 
   return (
