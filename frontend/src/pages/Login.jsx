@@ -3,8 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { loginUser } from "../services/api";
 
 // Importa l'URL dell'API dalla variabile d'ambiente
-// const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
-const API_URL = "https://mern-blog-ctt3.onrender.com"
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -23,10 +22,12 @@ export default function Login() {
     const params = new URLSearchParams(location.search);
     // Cerchiamo un parametro 'token' nell'URL
     const token = params.get("token");
+    console.log('Received token:', token);
 
     if (token) {
       // Se troviamo un token, lo salviamo nel localStorage
       localStorage.setItem("token", token);
+      console.log('Token saved, navigating to home');
       // Dispatchamo un evento 'storage' per aggiornare altri componenti che potrebbero dipendere dal token
       window.dispatchEvent(new Event("storage"));
       // Navighiamo alla home page

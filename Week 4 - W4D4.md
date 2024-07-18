@@ -118,7 +118,8 @@ Vai su https://render.com/ e crea un account gratuito.
 - Start Command: cd backend && node server.js
 - **Piano: IMPORTANTE! Seleziona il piano gratuito!**
 - Nella sezione "Environment", aggiungi tutte le variabili d'ambiente necessarie.
-> Assicurati di includere NODE_ENV=production.
+
+> Assicurati di includere NODE_ENV = production.
 
 Clicca su "Deploy Web Service" per iniziare il deploy.
 
@@ -187,6 +188,7 @@ Lancia la build et voilà!
 
 ```env
 FRONTEND_URL = https://mern-blog-part-v.vercel.app/
+NODE_ENV = production
 ```
 
 > Attendete il nuovo deploy ogni volta che aggiornate un env su render
