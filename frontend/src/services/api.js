@@ -2,7 +2,7 @@ import axios from "axios"; // Importa il modulo axios per effettuare le richiest
 
 // NEW! Definiamo l'url di base per tutte le richieste API
 // const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
-const API_URL = "https://mern-blog-ctt3.onrender.com"
+const API_URL = "https://mern-blog-ctt3.onrender.com/api"
 
 // Configura un'istanza di axios con l'URL di base
 const api = axios.create({
@@ -27,17 +27,6 @@ api.interceptors.request.use(
   }
 );
 
-// NEW! interceptor per gestire errori di autenticazione.
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem("token");
-      window.dispatchEvent(new Event("loginStateChange"));
-    }
-    return Promise.reject(error);
-  }
-);
 
 // Funzione per ottenere tutti i post del blog
 export const getPosts = () => api.get("/blogPosts");
