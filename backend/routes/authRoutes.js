@@ -76,7 +76,7 @@ router.get('/google/callback',
 
       // Reindirizza l'utente al frontend, passando il token come parametro URL
       // Il frontend può quindi salvare questo token e usarlo per le richieste autenticate
-      res.redirect(`http://localhost:5173/login?token=${token}`);
+      res.redirect(`${FRONTEND_URL}/login?token=${token}`);
     } catch (error) {
       // Se c'è un errore nella generazione del token, lo logghiamo
       console.error('Errore nella generazione del token:', error);
