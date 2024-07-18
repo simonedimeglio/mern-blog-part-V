@@ -81,7 +81,7 @@ router.get('/google/callback',
       // Se c'è un errore nella generazione del token, lo logghiamo
       console.error('Errore nella generazione del token:', error);
       // E reindirizziamo l'utente alla pagina di login con un messaggio di errore
-      res.redirect('/login?error=auth_failed');
+      res.redirect(`${FRONTEND_URL}/login?error=auth_failed`);
     }
   }
 );
