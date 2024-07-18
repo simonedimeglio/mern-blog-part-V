@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { loginUser } from "../services/api";
 
 // Importa l'URL dell'API dalla variabile d'ambiente
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+// const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+const API_URL = "https://mern-blog-ctt3.onrender.com"
 
 export default function Login() {
   const [formData, setFormData] = useState({
