@@ -60,7 +60,7 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 // scope: specifica le informazioni richiediamo a Google (profilo e email)
 
 // Rotta di callback per l'autenticazione Google
-router.get('/google/callback', 
+router.get('/api/auth/google/callback', 
   // Passport tenta di autenticare l'utente con le credenziali Google
   passport.authenticate('google', { failureRedirect: `${FRONTEND_URL}/login` }),
   // Se l'autenticazione fallisce, l'utente viene reindirizzato alla pagina di login
